@@ -14,12 +14,12 @@ fn main() {
         println!("Problem opening file: {}", err);
         process::exit(1);
     });
-    let hltas = HLTAS::from_str(&content).unwrap_or_else(|err| {
+    let mut hltas = HLTAS::from_str(&content).unwrap_or_else(|err| {
         println!("Problem parsing hltas file: {}", err);
         process::exit(1);
     });
 
-    if let Err(e) = hltas_cleaner::run(config, hltas) {
+    if let Err(e) = hltas_cleaner::run(config, &mut hltas) {
         println!("Error cleaning up, {}", e);
         process::exit(1);
     }
