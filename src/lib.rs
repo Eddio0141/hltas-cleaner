@@ -1,5 +1,5 @@
 use hltas::{HLTAS, types::{self, FrameBulk, Line}};
-use std::{error::Error, fs, num::NonZeroU32, slice::SliceIndex};
+use std::{error::Error, num::NonZeroU32};
 
 pub fn run(config: Config, hltas: HLTAS) -> Result<(), Box<dyn Error>> {
     let cleaned_up = no_dupe_framebulks(hltas);
@@ -9,6 +9,7 @@ pub fn run(config: Config, hltas: HLTAS) -> Result<(), Box<dyn Error>> {
 }
 
 fn no_dupe_framebulks(hltas: HLTAS) -> HLTAS {
+    // better way to do this?
     let prev_framebulk = {
         let mut line_found: Option<(usize, &types::FrameBulk)> = None;
         
@@ -46,7 +47,6 @@ fn no_dupe_framebulks(hltas: HLTAS) -> HLTAS {
                 let total_framecount = bulk.frame_count.get() + prev_framebulk.frame_count.get();
                 // the total came from nonzerou32 orignally so its fine
                 bulk_copy.frame_count = NonZeroU32::new(total_framecount).unwrap();
-                // i need to revise what * does
                 dupe_free_hltas.lines.push(Line::FrameBulk(bulk_copy));
             }
         } else {
