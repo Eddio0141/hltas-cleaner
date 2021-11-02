@@ -2,7 +2,7 @@ mod cleaners;
 mod tests;
 
 use hltas::HLTAS;
-use std::{error::Error, fs::File};
+use std::{env, error::Error, fs::File};
 
 pub use cleaners::no_dupe_framebulks;
 
@@ -25,7 +25,7 @@ pub struct Config {
 
 impl Config {
     pub fn from_args(args: &[String]) -> Result<Config, &str> {
-        let arg_count = 4;
+        let arg_count = 3;
 
         if args.len() < arg_count {
             return Err("not enough arguments");
@@ -33,13 +33,8 @@ impl Config {
 
         let filename = args[1].clone();
         let output_name = args[2].clone();
-        let remove_dupe_framebulks = match args[3].clone().parse::<bool>() {
-            Ok(b) => b,
-            Err(_) => {
-                return Err("failed to convert arg 4 to boolean");
-            }
-        };
-
+        let remove_dupe_framebulks = env::var("NoBulkDupe").is_err();
+        
         Ok(Config {
             file_path: filename,
             output_path: output_name,
