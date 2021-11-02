@@ -1,8 +1,8 @@
 use hltas::{
-    types::{self, FrameBulk, Line},
+    types::{self, Line},
     HLTAS,
 };
-use std::{error::Error, num::NonZeroU32, str::Lines};
+use std::{error::Error, num::NonZeroU32};
 
 pub fn run(config: Config, hltas: &mut HLTAS) -> Result<(), Box<dyn Error>> {
     let cleaned_up = no_dupe_framebulks(hltas);
@@ -75,7 +75,6 @@ fn no_dupe_framebulks(hltas: &mut HLTAS) {
     for (count, index) in framecount_and_index {
         let first_index = index[0];
 
-        // it will work
         if let Line::FrameBulk(bulk) = &mut hltas.lines[first_index] {
             bulk.frame_count = count;
         }
