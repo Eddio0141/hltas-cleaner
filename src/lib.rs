@@ -2,10 +2,15 @@ use hltas::{
     types::{Line},
     HLTAS,
 };
-use std::{error::Error, num::NonZeroU32};
+use std::{error::Error, fs::File, num::NonZeroU32};
 
-pub fn run(_config: Config, hltas: &mut HLTAS) -> Result<(), Box<dyn Error>> {
-    no_dupe_framebulks(hltas);
+pub fn run(config: Config, hltas: &mut HLTAS) -> Result<(), Box<dyn Error>> {
+    if config.remove_dupe_framebulks {
+        no_dupe_framebulks(hltas);
+    }
+
+    let file = File::create(config.output_path)?;
+    hltas.to_writer(file)?;
 
     Ok(())
 }
@@ -40,6 +45,7 @@ fn no_dupe_framebulks(hltas: &mut HLTAS) {
                 && bulk.action_keys == prev_framebulk.action_keys
                 && bulk.pitch == prev_framebulk.pitch
                 && bulk.console_command == prev_framebulk.console_command
+                && bulk.frame_time == prev_framebulk.frame_time
             {
                 // dupe found
 
@@ -94,8 +100,8 @@ fn no_dupe_framebulks(hltas: &mut HLTAS) {
 }
 
 pub struct Config {
-    pub filename: String,
-    pub output_name: String,
+    pub file_path: String,
+    pub output_path: String,
     pub remove_dupe_framebulks: bool,
 }
 
@@ -117,8 +123,8 @@ impl Config {
         };
 
         Ok(Config {
-            filename,
-            output_name,
+            file_path: filename,
+            output_path: output_name,
             remove_dupe_framebulks,
         })
     }
@@ -203,6 +209,38 @@ frames
 version 1
 frames
 ----------|------|------|0.001|0|-|3|a
+";
+
+        let mut content_before = HLTAS::from_str(content_before).unwrap();
+        let content_after = HLTAS::from_str(content_after).unwrap();
+
+        no_dupe_framebulks(&mut content_before);
+
+        assert_eq!(content_before, content_after);
+    }
+
+    #[test]
+    fn framebulk_dupe_test_4() {
+        let content_before = "\
+version 1
+frames
+----------|------|------|0.001|-|-|1
+----------|------|------|0.25|-|-|2
+----------|------|------|0.001|-|-|3
+----------|------|------|0.001|-|-|4
+----------|------|------|0.010000001|-|-|5
+----------|------|------|0.001|-|-|6
+----------|------|------|0.001|-|-|5
+";
+
+        let content_after = "\
+version 1
+frames
+----------|------|------|0.001|-|-|1
+----------|------|------|0.25|-|-|2
+----------|------|------|0.001|-|-|7
+----------|------|------|0.010000001|-|-|5
+----------|------|------|0.001|-|-|11
 ";
 
         let mut content_before = HLTAS::from_str(content_before).unwrap();

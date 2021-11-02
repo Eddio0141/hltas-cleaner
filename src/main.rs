@@ -10,7 +10,7 @@ fn main() {
     });
 
     // not sure if I can get around not living long enough problem
-    let content = fs::read_to_string(&config.filename).unwrap_or_else(|err| {
+    let content = fs::read_to_string(&config.file_path).unwrap_or_else(|err| {
         println!("Problem opening file: {}", err);
         process::exit(1);
     });
