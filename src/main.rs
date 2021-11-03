@@ -1,6 +1,8 @@
 use hltas::HLTAS;
-use hltas_cleaner::Config;
+use runner::Config;
 use std::{env, fs, process};
+
+mod runner;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -19,7 +21,7 @@ fn main() {
         process::exit(1);
     });
 
-    if let Err(e) = hltas_cleaner::run(config, &mut hltas) {
+    if let Err(e) = runner::run(config, &mut hltas) {
         eprintln!("Error cleaning up, {}", e);
         process::exit(1);
     }
