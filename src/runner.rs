@@ -30,7 +30,17 @@ impl Config {
 
         let filename = args[1].clone();
         let output_name = args[2].clone();
-        let remove_dupe_framebulks = env::var("NoBulkDupe").is_err();
+        let remove_dupe_framebulks = match env::var("NoBulkDupe") {
+            Ok(mut env_var) => {
+                env_var = env_var.to_lowercase();
+                if let Ok(env_var) = env_var.parse::<bool>() {
+                    env_var
+                } else {
+                    false
+                }
+            }
+            Err(_) => false,
+        };
 
         Ok(Config {
             file_path: filename,
