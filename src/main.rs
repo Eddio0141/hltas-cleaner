@@ -11,8 +11,6 @@ fn main() {
         process::exit(1);
     });
 
-    println!("{}", &config.remove_dupe_framebulks);
-
     // not sure if I can get around not living long enough problem
     let content = fs::read_to_string(&config.file_path).unwrap_or_else(|err| {
         eprintln!("Problem opening file: {}", err);
