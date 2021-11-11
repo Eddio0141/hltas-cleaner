@@ -88,6 +88,7 @@ pub fn no_dupe_framebulks(hltas: &mut HLTAS) {
     }
 }
 
+// TODO fix me
 fn wrap_angle(yaw: &mut f32) {
     *yaw %= 360.0;
     if *yaw < 0.0 {
