@@ -145,3 +145,25 @@ s03-------|------|------|0.001|4|-|5
 
     assert_eq!(content_before, content_after);
 }
+
+#[test]
+fn angle_wrap_test2() {
+    let content_before = "\
+version 1
+frames
+s03----c--|------|------|0.001|846|-|46|v
+";
+
+    let content_after = "\
+version 1
+frames
+s03----c--|------|------|0.001|126|-|46|v
+";
+
+    let mut content_before = HLTAS::from_str(content_before).unwrap();
+    let content_after = HLTAS::from_str(content_after).unwrap();
+
+    cleaners::angle_wrap(&mut content_before);
+
+    assert_eq!(content_before, content_after);
+}
