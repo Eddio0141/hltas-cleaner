@@ -117,3 +117,31 @@ frames
 
     assert_eq!(content_before, content_after);
 }
+
+#[test]
+fn angle_wrap_test() {
+    let content_before = "\
+version 1
+frames
+----------|------|------|0.001|360|-|5
+target_yaw 361
+target_yaw_override 362 363
+s03-------|------|------|0.001|364|-|5
+";
+
+    let content_after = "\
+version 1
+frames
+----------|------|------|0.001|0|-|5
+target_yaw 1
+target_yaw_override 2 3
+s03-------|------|------|0.001|4|-|5
+";
+
+    let mut content_before = HLTAS::from_str(content_before).unwrap();
+    let content_after = HLTAS::from_str(content_after).unwrap();
+
+    cleaners::angle_wrap(&mut content_before);
+
+    assert_eq!(content_before, content_after);
+}
