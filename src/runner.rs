@@ -27,7 +27,9 @@ impl Config {
 
         if args.len() < arg_count {
             // TODO better way of handling showing required arguments and environment variables
-            return Err("\nUsage: input_path output_path\nenvironment variables: NoBulkDupe (bool)");
+            return Err(
+                "\nUsage: input_path output_path\nenvironment variables: NoBulkDupe (bool)",
+            );
         }
 
         let filename = args[1].clone();
