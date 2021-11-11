@@ -7,6 +7,10 @@ pub fn run(config: Config, hltas: &mut HLTAS) -> Result<(), Box<dyn Error>> {
     if config.remove_dupe_framebulks {
         cleaners::no_dupe_framebulks(hltas);
     }
+    
+    if config.angle_wrap {
+        cleaners::angle_wrap(hltas);
+    }
 
     let file = File::create(config.output_path)?;
     hltas.to_writer(file)?;
