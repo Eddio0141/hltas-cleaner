@@ -1,5 +1,5 @@
 use hltas::{
-    types::{AutoMovement, Line, StrafeDir},
+    types::{Line},
     HLTAS,
 };
 use std::num::NonZeroU32;
@@ -84,52 +84,6 @@ pub fn no_dupe_framebulks(hltas: &mut HLTAS) {
 
         for i in index[..index.len() - 1].iter() {
             hltas.lines.remove(*i);
-        }
-    }
-}
-
-// TODO fix me
-fn wrap_angle(yaw: &mut f32) {
-    *yaw %= 360.0;
-    if *yaw < 0.0 {
-        *yaw += 360.0;
-    }
-}
-
-pub fn angle_wrap(hltas: &mut HLTAS) {
-    for line in &mut hltas.lines {
-        match line {
-            Line::FrameBulk(bulk) => {
-                if let Some(movement) = &mut bulk.auto_actions.movement {
-                    if let AutoMovement::SetYaw(yaw) = movement {
-                        wrap_angle(yaw);
-                    } else if let AutoMovement::Strafe(strafe) = movement {
-                        if let StrafeDir::Yaw(yaw) = &mut strafe.dir {
-                            wrap_angle(yaw);
-                        } else if let StrafeDir::Line { yaw } = &mut strafe.dir {
-                            wrap_angle(yaw);
-                        }
-                    }
-                }
-            }
-            Line::VectorialStrafingConstraints(constraints) => match constraints {
-                hltas::types::VectorialStrafingConstraints::Yaw { yaw, tolerance: _ } => {
-                    wrap_angle(yaw);
-                }
-                hltas::types::VectorialStrafingConstraints::YawRange { from, to } => {
-                    wrap_angle(from);
-                    wrap_angle(to);
-                }
-                _ => (),
-            },
-            Line::Change(change) => change.final_value %= 360.0,
-            Line::TargetYawOverride(yaws) => {
-                for yaw in 0..yaws.len() {
-                    let yaw = &mut yaws.to_mut()[yaw];
-                    wrap_angle(yaw);
-                }
-            }
-            _ => (),
         }
     }
 }

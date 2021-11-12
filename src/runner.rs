@@ -8,10 +8,6 @@ pub fn run(config: Config, hltas: &mut HLTAS) -> Result<(), Box<dyn Error>> {
         cleaners::no_dupe_framebulks(hltas);
     }
 
-    if config.angle_wrap {
-        cleaners::angle_wrap(hltas);
-    }
-
     let file = File::create(config.output_path)?;
     hltas.to_writer(file)?;
 
@@ -22,7 +18,6 @@ pub struct Config {
     pub file_path: String,
     pub output_path: String,
     pub remove_dupe_framebulks: bool,
-    pub angle_wrap: bool,
 }
 
 impl Config {
@@ -49,23 +44,11 @@ impl Config {
             }
             Err(_) => false,
         };
-        let angle_wrap = match env::var("AngleWrap") {
-            Ok(mut env_var) => {
-                env_var = env_var.to_lowercase();
-                if let Ok(env_var) = env_var.parse::<bool>() {
-                    env_var
-                } else {
-                    false
-                }
-            }
-            Err(_) => false,
-        };
 
         Ok(Config {
             file_path: filename,
             output_path: output_name,
             remove_dupe_framebulks,
-            angle_wrap,
         })
     }
 }
