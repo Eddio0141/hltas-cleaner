@@ -29,7 +29,7 @@ checksum = "396de984970346b0d9e93d1415082923c679e5ae5c3ee3dcbd104f5610af126b"
 [[package]]
 name = "hltas"
 version = "0.4.0"
-source = "git+https://github.com/HLTAS/hltas#f55c3cab4d2d5963bfd38ce52d337904a3b914d7"
+source = "git+https://github.com/HLTAS/hltas?branch=master#de9fe2e8114c846b9e4c4c51276f824ba28a668a"
 dependencies = [
  "cookie-factory",
  "nom",
