@@ -1,9 +1,42 @@
-use hltas::{
-    types::{Line},
-    HLTAS,
-};
+//! # Cleaners
+//!
+//! `cleaners` is a collection of utilities for cleaning up a hltas object.
+
+use hltas::{types::Line, HLTAS};
 use std::num::NonZeroU32;
 
+/// Combines duplicate framebulks together.
+///
+/// # Examples
+///
+/// ```
+/// use hltas::HLTAS;
+/// use crate::cleaners;
+///
+/// let hltas_before = "\
+/// version 1
+/// frames
+/// s03-------|------|------|0.001|0|-|100
+/// s03-------|------|------|0.001|0|-|50
+/// // I'm in the way!
+/// s03-------|------|------|0.001|0|-|1
+/// ";
+///
+/// let hltas_after = "\
+/// version 1
+/// frames
+/// s03-------|------|------|0.001|0|-|150
+/// // I'm in the way!
+/// s03-------|------|------|0.001|0|-|1
+/// ";
+///
+/// let mut hltas_before = HLTAS::from_str(hltas_before).unwrap();
+/// let hltas_after = HLTAS::from_str(hltas_after).unwrap();
+///
+/// no_dupe_framebulks(&mut hltas_before);
+///
+/// assert_eq!(hltas_before, hltas_after);
+/// ```
 pub fn no_dupe_framebulks(hltas: &mut HLTAS) {
     if hltas.lines.len() < 1 {
         return;

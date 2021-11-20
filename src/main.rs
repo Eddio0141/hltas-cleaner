@@ -2,7 +2,7 @@ use hltas::HLTAS;
 use hltas_cleaner::runner::{self, Config};
 use std::{env, fs, process};
 
-fn config_from_args(args: &[String]) -> Result<Config, &str> {
+fn config_from_args(mut args: env::Args) -> Result<Config, &'static str> {
     let arg_count = 3;
 
     if args.len() < arg_count {
@@ -12,8 +12,10 @@ fn config_from_args(args: &[String]) -> Result<Config, &str> {
             );
     }
 
-    let filename = args[1].clone();
-    let output_name = args[2].clone();
+    args.next();
+
+    let filename = args.next();
+    let output_name = args.next();
     let remove_dupe_framebulks = match env::var("NoBulkDupe") {
         Ok(mut env_var) => {
             env_var = env_var.to_lowercase();
@@ -26,16 +28,22 @@ fn config_from_args(args: &[String]) -> Result<Config, &str> {
         Err(_) => false,
     };
 
-    Ok(Config {
-        file_path: filename,
-        output_path: output_name,
-        remove_dupe_framebulks,
-    })
+    if let Some(filename) = filename {
+        if let Some(output_name) = output_name {
+            return Ok(Config {
+                file_path: filename,
+                output_path: output_name,
+                remove_dupe_framebulks,
+            });
+        }
+    }
+
+    // TODO more specific error
+    Err("Unable to get required args")
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let config = config_from_args(&args).unwrap_or_else(|err| {
+    let config = config_from_args(env::args()).unwrap_or_else(|err| {
         eprintln!("Problem parsing arguments: {}", err);
         process::exit(1);
     });
