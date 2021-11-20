@@ -11,7 +11,7 @@ use std::num::NonZeroU32;
 ///
 /// ```
 /// use hltas::HLTAS;
-/// use crate::cleaners;
+/// use hltas_cleaner::no_dupe_framebulks;
 ///
 /// let hltas_before = "\
 /// version 1
