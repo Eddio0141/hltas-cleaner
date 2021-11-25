@@ -8,7 +8,7 @@ fn config_from_args(mut args: env::Args) -> Result<Config, &'static str> {
     if args.len() < arg_count {
         // TODO better way of handling showing required arguments and environment variables
         return Err(
-                "\nUsage: input_path output_path\nenvironment variables: NoBulkDupe (bool)\nAngleWrap (bool)",
+                "\nUsage: input_path output_path\nenvironment variables: NoBulkDupe (bool)",
             );
     }
 
