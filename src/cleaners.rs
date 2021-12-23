@@ -38,7 +38,7 @@ use std::num::NonZeroU32;
 /// assert_eq!(hltas_before, hltas_after);
 /// ```
 pub fn no_dupe_framebulks(hltas: &mut HLTAS) {
-    if hltas.lines.len() < 1 {
+    if hltas.lines.is_empty() {
         return;
     }
 
@@ -56,7 +56,7 @@ pub fn no_dupe_framebulks(hltas: &mut HLTAS) {
             _ => {
                 // better way for the double prev_dupe changes?
                 prev_dupe = false;
-                prev_line = &line;
+                prev_line = line;
                 continue;
             }
         };
@@ -100,13 +100,11 @@ pub fn no_dupe_framebulks(hltas: &mut HLTAS) {
             prev_dupe = false;
         }
 
-        prev_line = &line;
+        prev_line = line;
     }
 
-    framecount_and_index.reverse();
-
     // remove duplicate framebulks and update frame count
-    for (count, mut index) in framecount_and_index {
+    for (count, mut index) in framecount_and_index.into_iter().rev() {
         let first_index = index[0];
 
         if let Line::FrameBulk(bulk) = &mut hltas.lines[first_index] {
