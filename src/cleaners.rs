@@ -104,16 +104,14 @@ pub fn no_dupe_framebulks(hltas: &mut HLTAS) {
     }
 
     // remove duplicate framebulks and update frame count
-    for (count, mut index) in framecount_and_index.into_iter().rev() {
+    for (count, index) in framecount_and_index.into_iter().rev() {
         let first_index = index[0];
 
         if let Line::FrameBulk(bulk) = &mut hltas.lines[first_index] {
             bulk.frame_count = count;
         }
 
-        index.reverse();
-
-        for i in index[..index.len() - 1].iter() {
+        for i in index[1..].iter().rev() {
             hltas.lines.remove(*i);
         }
     }
