@@ -116,3 +116,34 @@ frames
 
     assert_eq!(content_before, content_after);
 }
+
+#[test]
+fn no_comment() {
+    let content_before = "\
+version 1
+frames
+// yes
+----------|------|------|0.001|-|-|1
+// aaaaaaaa something
+// yo
+----------|------|------|0.001|-|-|1
+----------|------|------|0.001|-|-|1
+----------|------|------|0.001|-|-|1
+// no
+";
+
+    let content_after = "\
+version 1
+frames
+----------|------|------|0.001|-|-|1
+----------|------|------|0.001|-|-|1
+----------|------|------|0.001|-|-|1
+----------|------|------|0.001|-|-|1
+";
+    let mut content_before = HLTAS::from_str(content_before).unwrap();
+    let content_after = HLTAS::from_str(content_after).unwrap();
+
+    cleaners::remove_comments(&mut content_before);
+
+    assert_eq!(content_before, content_after);
+}
