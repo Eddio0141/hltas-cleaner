@@ -1,11 +1,13 @@
 [package]
 name = "hltas_cleaner"
-version = "1.0.2"
+authors = [ "yuu0141 <eddio0141@gmail.com>" ]
+version = "2.0.0"
 edition = "2018"
-description = "Utilities for cleaning a hltas object."
+description = "Utilities for cleaning a hltas object"
 license = "MIT"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 hltas = "0.5.0"
+clap = { version = "3.0.0", features = ["derive"] }
