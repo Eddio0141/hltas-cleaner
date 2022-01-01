@@ -1,6 +1,6 @@
 //! # Cleaners
 //!
-//! `cleaners` is a collection of utilities for cleaning up a hltas object.
+//! `cleaners` is a collection of utilities for cleaning up a hltas struct.
 
 use hltas::{types::Line, HLTAS};
 use std::num::NonZeroU32;
