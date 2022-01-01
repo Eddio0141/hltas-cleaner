@@ -28,8 +28,9 @@ checksum = "396de984970346b0d9e93d1415082923c679e5ae5c3ee3dcbd104f5610af126b"
 
 [[package]]
 name = "hltas"
-version = "0.4.0"
-source = "git+https://github.com/HLTAS/hltas?branch=master#de9fe2e8114c846b9e4c4c51276f824ba28a668a"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "731c562e0054cfbc3407289fb35f906cec4a319c0da6e3c1c57b489dfaf84603"
 dependencies = [
  "cookie-factory",
  "nom",
