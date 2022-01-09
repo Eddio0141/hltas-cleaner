@@ -1,17 +1,30 @@
 //! # Cleaners
 //!
-//! `cleaners` is a collection of utilities for cleaning up a hltas object.
+//! `cleaners` is a collection of utilities for cleaning up a hltas file.
 
 use hltas::{types::Line, HLTAS};
 use std::num::NonZeroU32;
 
+/// Contains information on what lines changed how.
+///
+/// * `lines_changed` contains indexes on what lines got modified.
+/// * `lines_removed` contains indexes on what lines got removed.
+#[derive(Default, Debug, PartialEq)]
+pub struct CleanerResult {
+    pub lines_changed: Vec<usize>,
+    pub lines_removed: Vec<usize>,
+}
+
 /// Combines duplicate framebulks together.
+///
+/// * Returns a `CleanerResult` with information of changed lines.
 ///
 /// # Examples
 ///
 /// ```
 /// use hltas::HLTAS;
 /// use hltas_cleaner::no_dupe_framebulks;
+/// use hltas_cleaner::CleanerResult;
 ///
 /// let hltas_before = "\
 /// version 1
@@ -33,13 +46,15 @@ use std::num::NonZeroU32;
 /// let mut hltas_before = HLTAS::from_str(hltas_before).unwrap();
 /// let hltas_after = HLTAS::from_str(hltas_after).unwrap();
 ///
-/// no_dupe_framebulks(&mut hltas_before);
+/// let remove_result_expected = CleanerResult { lines_changed: vec![0], lines_removed: vec![1] };
+/// let remove_result = no_dupe_framebulks(&mut hltas_before);
 ///
 /// assert_eq!(hltas_before, hltas_after);
+/// assert_eq!(remove_result_expected, remove_result);
 /// ```
-pub fn no_dupe_framebulks(hltas: &mut HLTAS) {
+pub fn no_dupe_framebulks(hltas: &mut HLTAS) -> CleanerResult {
     if hltas.lines.is_empty() {
-        return;
+        return CleanerResult::default();
     }
 
     let mut prev_line = &hltas.lines[0];
@@ -103,16 +118,29 @@ pub fn no_dupe_framebulks(hltas: &mut HLTAS) {
         prev_line = line;
     }
 
+    let mut lines_changed = Vec::new();
+    let mut lines_removed = Vec::new();
+
     // remove duplicate framebulks and update frame count
     for (count, index) in framecount_and_index.into_iter().rev() {
         let first_index = index[0];
 
         if let Line::FrameBulk(bulk) = &mut hltas.lines[first_index] {
             bulk.frame_count = count;
+            lines_changed.push(first_index);
         }
 
         for i in index[1..].iter().rev() {
             hltas.lines.remove(*i);
+            lines_removed.push(*i);
         }
+    }
+
+    lines_changed.reverse();
+    lines_removed.reverse();
+
+    CleanerResult {
+        lines_changed,
+        lines_removed,
     }
 }
