@@ -146,13 +146,14 @@ pub fn no_dupe_framebulks(hltas: &mut HLTAS) -> CleanerResult {
 }
 
 /// Removes all comments.
-/// 
+///
 /// # Example
-/// 
+///
 /// ```
 /// use hltas::HLTAS;
 /// use hltas_cleaner::remove_comments;
-/// 
+/// use hltas_cleaner::CleanerResult;
+///
 /// let hltas_before = "\
 /// version 1
 /// frames
@@ -175,16 +176,33 @@ pub fn no_dupe_framebulks(hltas: &mut HLTAS) -> CleanerResult {
 ///
 /// let mut hltas_before = HLTAS::from_str(hltas_before).unwrap();
 /// let hltas_after = HLTAS::from_str(hltas_after).unwrap();
-/// 
-/// remove_comments(&mut hltas_before);
-/// 
+///
+/// let remove_result_expected = CleanerResult { lines_changed: Vec::new(), lines_removed: vec![1, 3, 4, 6] };
+/// let remove_result = remove_comments(&mut hltas_before);
+///
 /// assert_eq!(hltas_before, hltas_after);
+/// assert_eq!(remove_result_expected, remove_result);
 /// ```
-pub fn remove_comments(hltas: &mut HLTAS) {
-    hltas.lines = hltas
+pub fn remove_comments(hltas: &mut HLTAS) -> CleanerResult {
+    let comment_indexes = hltas
         .lines
         .iter()
-        .filter(|line| !matches!(line, Line::Comment(_)))
-        .cloned()
-        .collect();
+        .enumerate()
+        .filter_map(|(i, line)| {
+            if matches!(line, Line::Comment(_)) {
+                Some(i)
+            } else {
+                None
+            }
+        })
+        .collect::<Vec<_>>();
+
+    for i in comment_indexes.iter().rev() {
+        hltas.lines.remove(*i);
+    }
+
+    CleanerResult {
+        lines_removed: comment_indexes,
+        ..Default::default()
+    }
 }
