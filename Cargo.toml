@@ -1,7 +1,7 @@
 [package]
 name = "hltas_cleaner"
 authors = [ "yuu0141 <eddio0141@gmail.com>" ]
-version = "2.0.0"
+version = "2.1.0"
 edition = "2018"
 description = "Utilities for cleaning a hltas object"
 license = "MIT"
