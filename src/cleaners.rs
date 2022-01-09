@@ -1,6 +1,6 @@
 //! # Cleaners
 //!
-//! `cleaners` is a collection of utilities for cleaning up a hltas file.
+//! `cleaners` is a collection of utilities for cleaning up a hltas struct.
 
 use hltas::{types::Line, HLTAS};
 use std::num::NonZeroU32;
@@ -19,7 +19,7 @@ pub struct CleanerResult {
 ///
 /// * Returns a `CleanerResult` with information of changed lines.
 ///
-/// # Examples
+/// # Example
 ///
 /// ```
 /// use hltas::HLTAS;
@@ -143,4 +143,48 @@ pub fn no_dupe_framebulks(hltas: &mut HLTAS) -> CleanerResult {
         lines_changed,
         lines_removed,
     }
+}
+
+/// Removes all comments.
+/// 
+/// # Example
+/// 
+/// ```
+/// use hltas::HLTAS;
+/// use hltas_cleaner::remove_comments;
+/// 
+/// let hltas_before = "\
+/// version 1
+/// frames
+/// s03-------|------|------|0.001|0|-|100
+/// // blah
+/// s03-------|------|------|0.001|0|-|50
+/// // I dont need this anymore
+/// // zzz
+/// s03-------|------|------|0.001|0|-|1
+/// // hello?
+/// ";
+///
+/// let hltas_after = "\
+/// version 1
+/// frames
+/// s03-------|------|------|0.001|0|-|100
+/// s03-------|------|------|0.001|0|-|50
+/// s03-------|------|------|0.001|0|-|1
+/// ";
+///
+/// let mut hltas_before = HLTAS::from_str(hltas_before).unwrap();
+/// let hltas_after = HLTAS::from_str(hltas_after).unwrap();
+/// 
+/// remove_comments(&mut hltas_before);
+/// 
+/// assert_eq!(hltas_before, hltas_after);
+/// ```
+pub fn remove_comments(hltas: &mut HLTAS) {
+    hltas.lines = hltas
+        .lines
+        .iter()
+        .filter(|line| !matches!(line, Line::Comment(_)))
+        .cloned()
+        .collect();
 }
